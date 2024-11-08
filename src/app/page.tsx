@@ -44,6 +44,7 @@ export default function Home() {
             return renderedLines.join('<br>')
         }
         catch (error) {
+            console.log("Error: ", error)
             return '';
         }
     }
