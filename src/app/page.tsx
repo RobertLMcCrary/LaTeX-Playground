@@ -8,6 +8,7 @@ export default function Home() {
 
     const [textInput, setTextInput] = useState<string>('')
     const [fontSize, setFontSize] = useState<number>(2)
+    const [linkName, setLinkName] = useState<string>('')
 
     const handleFontIncrease = () => {
         if (fontSize < 4) {
@@ -35,6 +36,7 @@ export default function Home() {
         setTextInput(e.target.value)
     }
 
+    //display LaTeX preview on the right
     const renderLatexPreview = (latex: string): string => {
         try {
             const renderedLines = latex.split('\n').map(line =>
@@ -47,6 +49,30 @@ export default function Home() {
             console.log("Error: ", error)
             return '';
         }
+    }
+
+    //handling file name changes
+    const handleFileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setLinkName(e.target.value)
+    }
+
+    //save to a .tex file
+    const generateTexFile = (fileName: string) => {
+        const textContent = textInput;
+
+        const blob = new Blob([textContent], { type: 'text/plain' })
+
+        //create download link
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = `${fileName}.tex`
+
+        //trigger download by clicking on the link
+        document.body.appendChild(link)
+        link.click()
+
+        //clean up the link element after download
+        document.body.removeChild(link)
     }
 
     return (
@@ -71,7 +97,7 @@ export default function Home() {
                     />
                 </div>
             </div>
-            <div className='text-black text-center'>
+            <div className='text-black text-center flex flex-row gap-[30vw]'>
                 <h1 className="text-4xl font-bold">Settings</h1>
                 <div>
                     <h3 className="text-2xl">Font Size</h3>
@@ -80,6 +106,15 @@ export default function Home() {
                     <button onClick={() => resetFont()} className='border p-1'>Reset</button>
                     <h3 className="text=2xl">{fontSize}</h3>
                 </div>
+            </div>
+            <div className='text-black text-center flex flex-col'>
+                <h1 className='text-2xl'>Save Your Notes as a File</h1>
+                <textarea
+                    value={linkName}
+                    placeholder='File Name...'
+                    onChange={handleFileChange}
+                />
+                <button onClick={() => generateTexFile(linkName)} className='border p-2 color-black b-black'>Create Notes File</button>
             </div>
         </div>
     );
