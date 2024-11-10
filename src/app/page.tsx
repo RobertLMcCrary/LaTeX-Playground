@@ -38,12 +38,16 @@ export default function Home() {
     //display LaTeX preview on the right
     const renderLatexPreview = (latex: string): string => {
         try {
-            const renderedLines = katex.renderToString(latex, {
-                throwOnError: false,
-                displayMode: true
-            })
+            const blocks = latex.split(/\n\s*\n/)
 
-            return renderedLines
+            const renderedBlocks = blocks.map(block =>
+                `<div style="margin-bottom: 4px;">${katex.renderToString(block, {
+                    throwOnError: false,
+                    displayMode: true
+                })}</div>`
+            )
+
+            return renderedBlocks.join('')
         }
         catch (error) {
             console.log("Error: ", error)
